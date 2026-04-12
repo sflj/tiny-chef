@@ -21,13 +21,36 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            padding-top: 20px;
+            padding: 10px;
+        }
+
+        /* Sekcja ustawień na górze */
+        #settings {
+            width: 90%;
+            max-width: 400px;
+            background: #252525;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--accent-color);
         }
 
         #recipe-container {
             width: 90%;
             max-width: 400px;
-            height: 350px;
+            height: 300px;
             display: flex;
             overflow-x: auto; 
             scroll-snap-type: x mandatory;
@@ -46,29 +69,27 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
             padding: 20px;
             box-sizing: border-box;
         }
 
-        .icon-recipe { font-size: 60px; margin-bottom: 10px; }
+        .icon-recipe { font-size: 50px; margin-bottom: 10px; }
 
-        /* Logger Panel */
         #logger {
             width: 90%;
             max-width: 400px;
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 10px;
             background: #000;
-            border: 1px dashed var(--accent-color);
-            font-size: 12px;
-            color: #00ff00; /* Klasyczny terminalowy zielony */
+            border-left: 3px solid var(--accent-color);
+            font-size: 11px;
+            color: #00ff00;
         }
 
         .val { font-weight: bold; color: #fff; }
 
         #sensor-btn {
-            padding: 15px;
+            padding: 12px;
             width: 90%;
             max-width: 400px;
             background: var(--accent-color);
@@ -77,37 +98,41 @@
             border-radius: 5px;
             font-family: inherit;
             margin-bottom: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <button id="sensor-btn" onclick="requestAccess()">ODBLOKUJ SENSORY & LOGI</button>
+    <div id="settings">
+        <div class="slider-label">
+            <span>Czułość (Threshold):</span>
+            <span id="threshold-val">0.20</span>
+        </div>
+        <input type="range" id="sensitivity-slider" min="0.05" max="1.0" step="0.05" value="0.20">
+    </div>
+
+    <button id="sensor-btn" onclick="requestAccess()">ODBLOKUJ SENSORY</button>
 
     <div id="recipe-container">
         <div class="step">
-            <div class="icon-recipe">🪵+🧶</div>
-            <p>1. Suszarka na pranie</p>
+            <div class="icon-recipe">🪵</div>
+            <p>1. START</p>
         </div>
         <div class="step">
-            <div class="icon-recipe">🧪+💧</div>
-            <p>2. Uzdatnianie wody</p>
-        </div>
-        <div class="step">
-            <div class="icon-recipe">🔋+☀️</div>
-            <p>3. Optymalizacja Solara</p>
+            <div class="icon-recipe">🧪</div>
+            <p>2. ŚRODEK</p>
         </div>
         <div class="step">
             <div class="icon-recipe">🍲</div>
-            <p>KONIEC LISTY</p>
+            <p>3. KONIEC</p>
         </div>
     </div>
 
     <div id="logger">
-        <div>X (Boki): <span id="val-x" class="val">0</span></div>
-        <div>Y (Góra/Dół): <span id="val-y" class="val">0</span></div>
-        <hr style="border: 0.5px solid #333">
-        <div>Max Peak: <span id="val-max" class="val">0</span></div>
+        <div>X (Kierunek): <span id="val-x" class="val">0.00</span></div>
+        <div style="font-size: 9px; color: #666;">(+) to ruch w prawo, (-) to ruch w lewo</div>
+        <hr style="border: 0.5px solid #333; margin: 5px 0;">
         <div>Status: <span id="status-text">Czekam...</span></div>
     </div>
 
@@ -115,32 +140,36 @@
         const container = document.getElementById('recipe-container');
         const debug = document.getElementById('status-text');
         const valX = document.getElementById('val-x');
-        const valY = document.getElementById('val-y');
-        const valMax = document.getElementById('val-max');
+        const slider = document.getElementById('sensitivity-slider');
+        const thresholdLabel = document.getElementById('threshold-val');
 
         let isThrottled = false;
-        let maxPeak = 0;
-        const THRESHOLD = 0.5; // Tutaj ustawiasz czułość
+        let THRESHOLD = 0.20;
 
-        function scrollNext() {
+        // Aktualizacja progu z suwaka
+        slider.oninput = function() {
+            THRESHOLD = parseFloat(this.value);
+            thresholdLabel.innerText = THRESHOLD.toFixed(2);
+        }
+
+        function move(direction) {
             if (isThrottled) return;
+            isThrottled = true;
 
             const cardWidth = container.offsetWidth;
-            const currentScroll = container.scrollLeft;
-            const maxScroll = container.scrollWidth - cardWidth;
             
-            // Logika bez zapętlania
-            if (currentScroll < maxScroll - 10) {
-                isThrottled = true;
+            if (direction === 'right') {
                 container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-                debug.innerText = "PRZEWINIĘTO!";
-                setTimeout(() => { 
-                    isThrottled = false; 
-                    debug.innerText = "Gotowy na tapnięcie";
-                }, 1000);
+                debug.innerText = ">>> RUCH W PRAWO";
             } else {
-                debug.innerText = "Ostatnia strona - stop.";
+                container.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                debug.innerText = "<<< RUCH W LEWO";
             }
+
+            setTimeout(() => { 
+                isThrottled = false; 
+                debug.innerText = "Gotowy";
+            }, 1000); // 1 sekunda przerwy między tapnięciami
         }
 
         function requestAccess() {
@@ -152,35 +181,27 @@
             } else {
                 startMotion();
             }
-            document.getElementById('sensor-btn').style.background = '#333';
-            document.getElementById('sensor-btn').innerText = "SENSORY AKTYWNE";
+            document.getElementById('sensor-btn').style.display = 'none';
         }
 
         function startMotion() {
             window.addEventListener('devicemotion', (event) => {
                 const acc = event.acceleration;
-                if (!acc) return;
+                if (!acc || !acc.x) return;
 
-                // Pobieramy absolutne wartości (puknięcie to wektor ujemny lub dodatni)
-                const x = Math.abs(acc.x || 0).toFixed(2);
-                const y = Math.abs(acc.y || 0).toFixed(2);
-                const currentMax = Math.max(x, y);
+                const x = acc.x; // Surowa wartość (może być ujemna)
+                valX.innerText = x.toFixed(3);
 
-                // Update UI logów
-                valX.innerText = x;
-                valY.innerText = y;
-                
-                if (currentMax > maxPeak) {
-                    maxPeak = currentMax;
-                    valMax.innerText = maxPeak;
-                }
-
-                // Detekcja uderzenia
-                if (currentMax > THRESHOLD) {
-                    scrollNext();
+                // Sprawdzamy czy siła przekracza próg (używając wartości bezwzględnej)
+                if (Math.abs(x) > THRESHOLD) {
+                    if (x > 0) {
+                        move('right');
+                    } else {
+                        move('left');
+                    }
                 }
             });
-            debug.innerText = "Nasłuchuję...";
+            debug.innerText = "Nasłuchuję uderzeń...";
         }
     </script>
 </body>
