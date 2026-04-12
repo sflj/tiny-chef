@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VanLife RPG Chef</title>
+    <title>VanLife RPG Tool</title>
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --accent-color: #88a05e; /* Zelda-ish Green */
+            --accent-color: #88a05e;
             --text-color: #e0e0e0;
         }
 
@@ -22,166 +22,133 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        /* Ekran startowy (wymagany dla odblokowania sensorów) */
-        #overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            text-align: center;
         }
 
         #recipe-container {
-            width: 85%;
+            width: 90%;
             max-width: 400px;
-            height: 400px;
+            height: 450px;
             display: flex;
-            overflow: hidden;
+            /* Włączamy normalny scroll palcem */
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
-            border: 3px solid var(--accent-color);
-            border-radius: 20px;
+            border: 2px solid #333;
+            border-radius: 15px;
             background: var(--card-bg);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            -webkit-overflow-scrolling: touch;
         }
+
+        /* Ukrywamy scrollbar dla estetyki */
+        #recipe-container::-webkit-scrollbar { display: none; }
 
         .step {
             min-width: 100%;
+            scroll-snap-align: start;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
-        .icon-recipe {
-            font-size: 70px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        .icon-recipe { font-size: 80px; margin-bottom: 20px; }
+
+        #sensor-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            font-size: 10px;
+            background: #333;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 5px;
+            z-index: 1000;
         }
 
-        .instruction {
-            font-size: 1.2rem;
-            line-height: 1.4;
-            text-transform: uppercase;
-        }
-
-        .status-bar {
-            margin-top: 20px;
+        .status-msg {
+            margin-top: 15px;
             font-size: 0.7rem;
             color: var(--accent-color);
-            letter-spacing: 1px;
-        }
-
-        button {
-            padding: 15px 30px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .hint {
-            margin-top: 15px;
-            font-size: 0.8rem;
-            opacity: 0.7;
         }
     </style>
 </head>
 <body>
 
-    <div id="overlay">
-        <h1>VANLIFE CHEF</h1>
-        <p>Gotuj bez brudzenia ekranu</p>
-        <button onclick="startApp()">Zacznij Przygodę</button>
-        <p class="hint">Po wejściu przechyl telefon w prawo, aby przewinąć.</p>
-    </div>
+    <button id="sensor-btn" onclick="requestAccess()">AKTYWUJ SENSORY (TAP)</button>
 
     <div id="recipe-container">
         <div class="step">
-            <div class="icon-recipe">🥩 + 🍄</div>
-            <p class="instruction">Wrzuć "Loot" na patelnię</p>
+            <div class="icon-recipe">🪵+🧶</div>
+            <p>CRAFTING: Suszarka na pranie</p>
+            <p style="font-size: 0.8rem">Puknij telefon w bok -></p>
         </div>
         <div class="step">
-            <div class="icon-recipe">🔥 + ⌛</div>
-            <p class="instruction">Czekaj aż zabulgocze</p>
+            <div class="icon-recipe">🧪+💧</div>
+            <p>CRAFTING: Uzdatnianie wody</p>
         </div>
         <div class="step">
-            <div class="icon-recipe">🌿 + 🧂</div>
-            <p class="instruction">Dodaj zioła dla bonusu do HP</p>
-        </div>
-        <div class="step">
-            <div class="icon-recipe">🍲</div>
-            <p class="instruction">Dania gotowe! <br>+20 Energii</p>
+            <div class="icon-recipe">🔋+☀️</div>
+            <p>SYSTEM: Solar Optimization</p>
         </div>
     </div>
 
-    <div class="status-bar" id="debug">System: Gotowy</div>
+    <div class="status-msg" id="debug">System: Czekam na aktywację</div>
 
     <script>
         const container = document.getElementById('recipe-container');
         const debug = document.getElementById('debug');
-        const overlay = document.getElementById('overlay');
-        let currentStep = 0;
-        const totalSteps = 4;
         let isThrottled = false;
 
+        // Funkcja przewijania
         function scrollNext() {
             if (isThrottled) return;
-            
             isThrottled = true;
-            currentStep = (currentStep + 1) % totalSteps;
+
+            const cardWidth = container.offsetWidth;
+            const maxScroll = container.scrollWidth - cardWidth;
             
-            container.scrollTo({
-                left: container.offsetWidth * currentStep,
-                behavior: 'smooth'
-            });
-
-            debug.innerText = `System: Przewinięto do kroku ${currentStep + 1}`;
-            
-            // Blokada na 1.2 sekundy, żeby nie przewijać zbyt szybko
-            setTimeout(() => { isThrottled = false; }, 1200);
-        }
-
-        function startApp() {
-            overlay.style.display = 'none';
-
-            // Prośba o dostęp do sensorów (wymagane na iOS, opcjonalne na Androidzie)
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        }
-                    })
-                    .catch(console.error);
+            // Jeśli jesteśmy na końcu, wróć do początku
+            if (container.scrollLeft >= maxScroll - 5) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
-                // Android i starsze przeglądarki
-                window.addEventListener('deviceorientation', handleOrientation);
+                container.scrollBy({ left: cardWidth, behavior: 'smooth' });
             }
-            
-            debug.innerText = "System: Sensor Ruchu Aktywny";
+
+            debug.innerText = "Wykryto TAP! Przewijam...";
+            setTimeout(() => { isThrottled = false; }, 800);
         }
 
-        function handleOrientation(event) {
-            // Gamma to przechył boczny (lewo-prawo)
-            // Jeśli przechylisz telefon w prawo o więcej niż 25 stopni
-            if (event.gamma > 25) {
-                scrollNext();
+        function requestAccess() {
+            // Obsługa iOS
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission()
+                    .then(state => {
+                        if (state === 'granted') startMotion();
+                    });
+            } else {
+                startMotion();
             }
+            document.getElementById('sensor-btn').style.display = 'none';
+        }
+
+        function startMotion() {
+            window.addEventListener('devicemotion', (event) => {
+                // Wyciągamy przyspieszenie z osi X (boki telefonu)
+                const acc = event.acceleration;
+                if (!acc) return;
+
+                // Czułość uderzenia (zależna od telefonu, 10-15 jest ok)
+                const threshold = 12; 
+
+                if (Math.abs(acc.x) > threshold || Math.abs(acc.y) > threshold) {
+                    scrollNext();
+                }
+            });
+            debug.innerText = "Sensory aktywne. Puknij w bok telefonu.";
         }
     </script>
 </body>
