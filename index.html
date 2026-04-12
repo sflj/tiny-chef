@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VanLife RPG Tool</title>
+    <title>VanLife RPG - Sensor Lab</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -20,26 +20,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             height: 100vh;
+            padding-top: 20px;
         }
 
         #recipe-container {
             width: 90%;
             max-width: 400px;
-            height: 450px;
+            height: 350px;
             display: flex;
-            /* Włączamy normalny scroll palcem */
             overflow-x: auto; 
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             border: 2px solid #333;
             border-radius: 15px;
             background: var(--card-bg);
-            -webkit-overflow-scrolling: touch;
         }
 
-        /* Ukrywamy scrollbar dla estetyki */
         #recipe-container::-webkit-scrollbar { display: none; }
 
         .step {
@@ -54,76 +51,99 @@
             box-sizing: border-box;
         }
 
-        .icon-recipe { font-size: 80px; margin-bottom: 20px; }
+        .icon-recipe { font-size: 60px; margin-bottom: 10px; }
 
-        #sensor-btn {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 8px 12px;
-            font-size: 10px;
-            background: #333;
-            color: #888;
-            border: 1px solid #444;
-            border-radius: 5px;
-            z-index: 1000;
+        /* Logger Panel */
+        #logger {
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #000;
+            border: 1px dashed var(--accent-color);
+            font-size: 12px;
+            color: #00ff00; /* Klasyczny terminalowy zielony */
         }
 
-        .status-msg {
-            margin-top: 15px;
-            font-size: 0.7rem;
-            color: var(--accent-color);
+        .val { font-weight: bold; color: #fff; }
+
+        #sensor-btn {
+            padding: 15px;
+            width: 90%;
+            max-width: 400px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <button id="sensor-btn" onclick="requestAccess()">AKTYWUJ SENSORY (TAP)</button>
+    <button id="sensor-btn" onclick="requestAccess()">ODBLOKUJ SENSORY & LOGI</button>
 
     <div id="recipe-container">
         <div class="step">
             <div class="icon-recipe">🪵+🧶</div>
-            <p>CRAFTING: Suszarka na pranie</p>
-            <p style="font-size: 0.8rem">Puknij telefon w bok -></p>
+            <p>1. Suszarka na pranie</p>
         </div>
         <div class="step">
             <div class="icon-recipe">🧪+💧</div>
-            <p>CRAFTING: Uzdatnianie wody</p>
+            <p>2. Uzdatnianie wody</p>
         </div>
         <div class="step">
             <div class="icon-recipe">🔋+☀️</div>
-            <p>SYSTEM: Solar Optimization</p>
+            <p>3. Optymalizacja Solara</p>
+        </div>
+        <div class="step">
+            <div class="icon-recipe">🍲</div>
+            <p>KONIEC LISTY</p>
         </div>
     </div>
 
-    <div class="status-msg" id="debug">System: Czekam na aktywację</div>
+    <div id="logger">
+        <div>X (Boki): <span id="val-x" class="val">0</span></div>
+        <div>Y (Góra/Dół): <span id="val-y" class="val">0</span></div>
+        <hr style="border: 0.5px solid #333">
+        <div>Max Peak: <span id="val-max" class="val">0</span></div>
+        <div>Status: <span id="status-text">Czekam...</span></div>
+    </div>
 
     <script>
         const container = document.getElementById('recipe-container');
-        const debug = document.getElementById('debug');
-        let isThrottled = false;
+        const debug = document.getElementById('status-text');
+        const valX = document.getElementById('val-x');
+        const valY = document.getElementById('val-y');
+        const valMax = document.getElementById('val-max');
 
-        // Funkcja przewijania
+        let isThrottled = false;
+        let maxPeak = 0;
+        const THRESHOLD = 3; // Tutaj ustawiasz czułość
+
         function scrollNext() {
             if (isThrottled) return;
-            isThrottled = true;
 
             const cardWidth = container.offsetWidth;
+            const currentScroll = container.scrollLeft;
             const maxScroll = container.scrollWidth - cardWidth;
             
-            // Jeśli jesteśmy na końcu, wróć do początku
-            if (container.scrollLeft >= maxScroll - 5) {
-                container.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
+            // Logika bez zapętlania
+            if (currentScroll < maxScroll - 10) {
+                isThrottled = true;
                 container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                debug.innerText = "PRZEWINIĘTO!";
+                setTimeout(() => { 
+                    isThrottled = false; 
+                    debug.innerText = "Gotowy na tapnięcie";
+                }, 1000);
+            } else {
+                debug.innerText = "Ostatnia strona - stop.";
             }
-
-            debug.innerText = "Wykryto TAP! Przewijam...";
-            setTimeout(() => { isThrottled = false; }, 800);
         }
 
         function requestAccess() {
-            // Obsługa iOS
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
                 DeviceMotionEvent.requestPermission()
                     .then(state => {
@@ -132,23 +152,35 @@
             } else {
                 startMotion();
             }
-            document.getElementById('sensor-btn').style.display = 'none';
+            document.getElementById('sensor-btn').style.background = '#333';
+            document.getElementById('sensor-btn').innerText = "SENSORY AKTYWNE";
         }
 
         function startMotion() {
             window.addEventListener('devicemotion', (event) => {
-                // Wyciągamy przyspieszenie z osi X (boki telefonu)
                 const acc = event.acceleration;
                 if (!acc) return;
 
-                // Czułość uderzenia (zależna od telefonu, 10-15 jest ok)
-                const threshold = 2; 
+                // Pobieramy absolutne wartości (puknięcie to wektor ujemny lub dodatni)
+                const x = Math.abs(acc.x || 0).toFixed(2);
+                const y = Math.abs(acc.y || 0).toFixed(2);
+                const currentMax = Math.max(x, y);
 
-                if (Math.abs(acc.x) > threshold || Math.abs(acc.y) > threshold) {
+                // Update UI logów
+                valX.innerText = x;
+                valY.innerText = y;
+                
+                if (currentMax > maxPeak) {
+                    maxPeak = currentMax;
+                    valMax.innerText = maxPeak;
+                }
+
+                // Detekcja uderzenia
+                if (currentMax > THRESHOLD) {
                     scrollNext();
                 }
             });
-            debug.innerText = "Sensory aktywne. Puknij w bok telefonu.";
+            debug.innerText = "Nasłuchuję...";
         }
     </script>
 </body>
