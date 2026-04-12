@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VanLife RPG - Recipe List v2</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --accent-color: #88a05e;
+            --text-main: #e0e0e0;
+            --text-dim: #888;
+            --border: #333;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #recipe-list {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px 15px;
+            box-sizing: border-box;
+        }
+
+        .recipe-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centrowanie w poziomie */
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .recipe-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        /* Sekcja Formuły */
+        .recipe-formula {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-icon {
+            font-size: 4rem; /* Ikona rezultatu większa */
+            filter: drop-shadow(0 0 10px rgba(136, 160, 94, 0.3));
+        }
+
+        .ingredients-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .plus {
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+
+        /* Meta Dane z Ikonami */
+        .recipe-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+            width: 100%;
+            color: var(--text-main);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .icon-small { font-size: 1.1rem; }
+        .energy-val { color: #ff4d4d; }
+        .diff-val { color: #ffd700; }
+    </style>
+</head>
+<body>
+
+    <div id="recipe-list">
+        </div>
+
+    <script>
+        // Dane z uwzględnieniem difficulty: 1-3
+        const recipes = [
+            {
+                id: "shakshuka",
+                name: "Szakszuka",
+                resultIcon: "🍳",
+                energy: 3,
+                difficulty: 1,
+                prepTime: 12,
+                mainIngredients: [
+                    { icon: "🥚" },
+                    { icon: "🧅" },
+                    { icon: "🍅" }
+                ]
+            },
+            {
+                id: "tuna-pasta",
+                name: "Makaron Tuńczyk",
+                resultIcon: "🍝",
+                energy: 5,
+                difficulty: 2,
+                prepTime: 10,
+                mainIngredients: [
+                    { icon: "📦" }, // makaron
+                    { icon: "🐟" }
+                ]
+            },
+            {
+                id: "wild-stew",
+                name: "Gulasz Obozowy",
+                resultIcon: "🍲",
+                energy: 5,
+                difficulty: 3,
+                prepTime: 45,
+                mainIngredients: [
+                    { icon: "🥩" },
+                    { icon: "🥔" },
+                    { icon: "🥕" }
+                ]
+            }
+        ];
+
+        function renderRecipes() {
+            const list = document.getElementById('recipe-list');
+            list.innerHTML = '';
+
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+
+                // Budowanie rzędu składników z plusami
+                const ingredientsHTML = recipe.mainIngredients
+                    .map(ing => `<span>${ing.icon}</span>`)
+                    .join('<span class="plus">+</span>');
+
+                // Generowanie serduszek energii
+                const energyIcons = "❤️".repeat(recipe.energy);
+                
+                // Generowanie skali trudności (np. ⚔️)
+                const diffIcons = "⭐".repeat(recipe.difficulty);
+
+                card.innerHTML = `
+                    <div class="recipe-name">${recipe.name}</div>
+                    
+                    <div class="recipe-formula">
+                        <div class="result-icon">${recipe.resultIcon}</div>
+                        <div class="ingredients-row">
+                            ${ingredientsHTML}
+                        </div>
+                    </div>
+
+                    <div class="recipe-meta">
+                        <div class="meta-item">
+                            <span class="icon-small">⏱️</span> ${recipe.prepTime}m
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon-small">🛡️</span> <span class="diff-val">${diffIcons}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="energy-val">${energyIcons}</span>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+
+        renderRecipes();
+    </script>
+</body>
+</html>
