@@ -106,11 +106,10 @@
             background: #333;
         }
 
-        /* --- SCROLL AREA (Poprawiony scroll pionowy) --- */
         .filter-scroll-area {
             flex: 1; 
             overflow-y: auto;
-            overflow-x: hidden; /* Blokada scrolla poziomego */
+            overflow-x: hidden;
             padding-right: 5px;
             display: flex;
             flex-direction: column;
@@ -137,7 +136,7 @@
         .category-container {
             padding: 10px;
             display: flex;
-            flex-wrap: wrap; /* Pozwala zawijać chipy w pionie */
+            flex-wrap: wrap;
             gap: 8px;
             border-top: 1px solid #222;
         }
@@ -150,6 +149,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: 0.2s;
+            text-transform: capitalize;
         }
 
         .ingredient-chip.active {
@@ -157,7 +157,6 @@
             border-color: var(--accent-gold);
         }
 
-        /* Styl dla wybranego narzędzia */
         .ingredient-chip.tool-active {
             background: var(--accent-gold);
             color: black;
@@ -244,8 +243,7 @@
             <button class="sort-btn" onclick="setSort('difficulty', this)">👨‍🍳</button>
         </div>
 
-        <div class="filter-scroll-area" id="filter-accordion-container">
-            </div>
+        <div class="filter-scroll-area" id="filter-accordion-container"></div>
 
         <div class="filter-footer">
             <label style="cursor: pointer; font-size: 0.85rem; user-select: none;">
@@ -267,7 +265,7 @@
 
         let allRecipes = [];
         let selectedIngredients = new Set();
-        let selectedToolIcon = null; // Zamiast wartości z selecta
+        let selectedToolIcon = null; 
         let currentSort = 'name';
 
         const filterBtn = document.getElementById('filter-btn');
@@ -289,19 +287,21 @@
         }
 
         function generateFilters(recipes) {
-            const toolsSet = new Set();
+            const toolsMap = new Map(); // Mapa icon -> name
             const ingredientsMap = new Map();
 
             recipes.forEach(r => {
                 r.mainIngredients.forEach(i => ingredientsMap.set(i.item, i.icon));
-                if(r.tools) r.tools.forEach(t => toolsSet.add(t.icon));
+                if(r.tools) {
+                    r.tools.forEach(t => toolsMap.set(t.icon, t.item));
+                }
             });
 
             accordionContainer.innerHTML = '';
 
-            // --- 1. AKORDEON NARZĘDZI ---
+            // --- 1. AKORDEON SPRZĘTU (Z NAZWAMI) ---
             const toolDet = document.createElement('details');
-            toolDet.open = true; // Narzędzia otwarte na start
+            toolDet.open = true;
             const toolSum = document.createElement('summary');
             toolSum.textContent = "Sprzęt (Wybierz jeden)";
             toolDet.appendChild(toolSum);
@@ -309,12 +309,11 @@
             const toolCont = document.createElement('div');
             toolCont.className = 'category-container';
 
-            toolsSet.forEach(icon => {
+            toolsMap.forEach((name, icon) => {
                 const chip = document.createElement('div');
                 chip.className = 'ingredient-chip';
-                chip.innerHTML = `${icon} Sprzęt`;
+                chip.innerHTML = `${icon} ${name}`;
                 chip.onclick = () => {
-                    // Logika Radio: odznacz inne
                     const isAlreadySelected = chip.classList.contains('tool-active');
                     toolCont.querySelectorAll('.ingredient-chip').forEach(c => c.classList.remove('tool-active'));
                     
