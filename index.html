@@ -29,6 +29,7 @@
             align-items: center;
             min-height: 100vh;
             padding-top: var(--header-h);
+            overflow-x: hidden;
         }
 
         /* --- HEADER --- */
@@ -68,7 +69,7 @@
             position: fixed;
             top: var(--header-h);
             width: 100%;
-            height: calc(100vh - var(--header-h)); /* Panel na resztę ekranu */
+            height: calc(100vh - var(--header-h));
             background: #111;
             border-bottom: 1px solid #333;
             padding: 15px;
@@ -105,28 +106,15 @@
             background: #333;
         }
 
-        /* (a) Select z max-width */
-        #tool-filter {
-            width: 100%;
-            max-width: 80%;
-            margin: 0 auto;
-            padding: 10px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 8px;
-            outline: none;
-            display: block;
-        }
-
-        /* (c) Kontener scrollujący dla akordeonów */
+        /* --- SCROLL AREA (Poprawiony scroll pionowy) --- */
         .filter-scroll-area {
             flex: 1; 
             overflow-y: auto;
-            padding-right: 5px; /* miejsce na scrollbar */
+            overflow-x: hidden; /* Blokada scrolla poziomego */
+            padding-right: 5px;
             display: flex;
             flex-direction: column;
-            gap: 8px; /* (b) marginesy między akordeonami */
+            gap: 8px;
         }
 
         details {
@@ -149,7 +137,7 @@
         .category-container {
             padding: 10px;
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Pozwala zawijać chipy w pionie */
             gap: 8px;
             border-top: 1px solid #222;
         }
@@ -161,11 +149,20 @@
             border-radius: 20px;
             font-size: 0.8rem;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .ingredient-chip.active {
             background: var(--type-vege);
             border-color: var(--accent-gold);
+        }
+
+        /* Styl dla wybranego narzędzia */
+        .ingredient-chip.tool-active {
+            background: var(--accent-gold);
+            color: black;
+            border-color: white;
+            font-weight: bold;
         }
 
         .filter-footer {
@@ -247,11 +244,8 @@
             <button class="sort-btn" onclick="setSort('difficulty', this)">👨‍🍳</button>
         </div>
 
-        <select id="tool-filter">
-            <option value="">Wszystkie narzędzia</option>
-        </select>
-
-        <div class="filter-scroll-area" id="ingredient-cloud"></div>
+        <div class="filter-scroll-area" id="filter-accordion-container">
+            </div>
 
         <div class="filter-footer">
             <label style="cursor: pointer; font-size: 0.85rem; user-select: none;">
@@ -273,12 +267,13 @@
 
         let allRecipes = [];
         let selectedIngredients = new Set();
+        let selectedToolIcon = null; // Zamiast wartości z selecta
         let currentSort = 'name';
 
         const filterBtn = document.getElementById('filter-btn');
         const filterPanel = document.getElementById('filter-panel');
-        const toolSelect = document.getElementById('tool-filter');
         const recipeList = document.getElementById('recipe-list');
+        const accordionContainer = document.getElementById('filter-accordion-container');
 
         filterBtn.onclick = () => filterPanel.classList.toggle('visible');
 
@@ -294,7 +289,6 @@
         }
 
         function generateFilters(recipes) {
-            const cloud = document.getElementById('ingredient-cloud');
             const toolsSet = new Set();
             const ingredientsMap = new Map();
 
@@ -303,14 +297,40 @@
                 if(r.tools) r.tools.forEach(t => toolsSet.add(t.icon));
             });
 
-            toolsSet.forEach(icon => {
-                const opt = document.createElement('option');
-                opt.value = icon;
-                opt.textContent = `${icon} Narzędzie`;
-                toolSelect.appendChild(opt);
-            });
+            accordionContainer.innerHTML = '';
 
-            cloud.innerHTML = '';
+            // --- 1. AKORDEON NARZĘDZI ---
+            const toolDet = document.createElement('details');
+            toolDet.open = true; // Narzędzia otwarte na start
+            const toolSum = document.createElement('summary');
+            toolSum.textContent = "Sprzęt (Wybierz jeden)";
+            toolDet.appendChild(toolSum);
+
+            const toolCont = document.createElement('div');
+            toolCont.className = 'category-container';
+
+            toolsSet.forEach(icon => {
+                const chip = document.createElement('div');
+                chip.className = 'ingredient-chip';
+                chip.innerHTML = `${icon} Sprzęt`;
+                chip.onclick = () => {
+                    // Logika Radio: odznacz inne
+                    const isAlreadySelected = chip.classList.contains('tool-active');
+                    toolCont.querySelectorAll('.ingredient-chip').forEach(c => c.classList.remove('tool-active'));
+                    
+                    if (isAlreadySelected) {
+                        selectedToolIcon = null;
+                    } else {
+                        chip.classList.add('tool-active');
+                        selectedToolIcon = icon;
+                    }
+                };
+                toolCont.appendChild(chip);
+            });
+            toolDet.appendChild(toolCont);
+            accordionContainer.appendChild(toolDet);
+
+            // --- 2. AKORDEONY SKŁADNIKÓW ---
             for (const [catName, items] of Object.entries(categories)) {
                 const det = document.createElement('details');
                 const sum = document.createElement('summary');
@@ -330,14 +350,13 @@
                     chip.onclick = () => {
                         chip.classList.toggle('active');
                         selectedIngredients.has(itemName) ? selectedIngredients.delete(itemName) : selectedIngredients.add(itemName);
-                        // Opcjonalnie: applyAndRender() tutaj dla live-update
                     };
                     cont.appendChild(chip);
                 });
 
                 if (cont.children.length > 0) {
                     det.appendChild(cont);
-                    cloud.appendChild(det);
+                    accordionContainer.appendChild(det);
                 }
             }
         }
@@ -355,11 +374,10 @@
         };
 
         function applyAndRender() {
-            const tool = toolSelect.value;
             const vege = document.getElementById('vege-only').checked;
 
             let filtered = allRecipes.filter(r => {
-                const tMatch = !tool || (r.tools && r.tools.some(t => t.icon === tool));
+                const tMatch = !selectedToolIcon || (r.tools && r.tools.some(t => t.icon === selectedToolIcon));
                 const vMatch = !vege || r.tags.includes('vege');
                 const rIngs = r.mainIngredients.map(i => i.item);
                 const iMatch = Array.from(selectedIngredients).every(name => rIngs.includes(name));
