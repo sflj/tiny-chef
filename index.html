@@ -31,8 +31,7 @@
             padding-top: var(--header-h);
         }
 
-        /* --- UI COMPONENTS --- */
-        
+        /* --- HEADER --- */
         header {
             position: fixed;
             top: 0;
@@ -61,21 +60,21 @@
             cursor: pointer;
             user-select: none;
             padding: 5px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- FILTER PANEL --- */
-
         .filter-panel {
-            display: none; /* Ukryty domyślnie */
+            display: none;
             position: fixed;
             top: var(--header-h);
             width: 100%;
-            max-width: 400px;
             background: #111;
             border-bottom: 1px solid #333;
             padding: 15px;
             box-sizing: border-box;
             flex-direction: column;
+            align-items: center;
             gap: 15px;
             z-index: 90;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
@@ -87,6 +86,7 @@
 
         #tool-filter {
             width: 100%;
+            max-width: 80%; /* Ograniczenie szerokości selecta */
             padding: 10px;
             background: #1a1a1a;
             border: 1px solid #444;
@@ -105,6 +105,7 @@
             flex-wrap: wrap;
             gap: 8px;
             justify-content: center;
+            max-width: 800px;
         }
 
         .ingredient-chip {
@@ -128,6 +129,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
+            max-width: 400px;
         }
 
         .toggle-btn input { display: none; }
@@ -156,23 +159,26 @@
             font-family: 'Lato', sans-serif;
         }
 
-        /* --- RECIPE LIST & CARDS --- */
-
+        /* --- RECIPE GRID (RWD) --- */
         #recipe-list {
             width: 100%;
-            max-width: 400px;
+            max-width: 1200px;
             padding: 20px 15px 40px 15px;
             box-sizing: border-box;
+            display: grid;
+            /* Kolumny: minimum 320px, rozciągaj się jeśli jest miejsce */
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
         }
 
         .recipe-card {
             border: 1px solid #444;
             border-radius: 12px;
-            margin-bottom: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            height: fit-content;
         }
 
         .card-header {
@@ -283,7 +289,6 @@
         let allRecipes = [];
         let selectedIngredients = new Set();
 
-        // Toggle panelu filtrów
         filterBtn.onclick = () => filterPanel.classList.toggle('visible');
 
         async function fetchRecipes() {
@@ -309,7 +314,7 @@
                 if(r.tools) r.tools.forEach(t => toolsSet.add(t.icon));
             });
 
-            // Narzędzia
+            // Dynamiczne narzędzia
             toolsSet.forEach(icon => {
                 const opt = document.createElement('option');
                 opt.value = icon;
@@ -317,7 +322,7 @@
                 toolSelect.appendChild(opt);
             });
 
-            // Składniki
+            // Dynamiczne składniki
             ingredientsMap.forEach((icon, name) => {
                 const chip = document.createElement('div');
                 chip.className = 'ingredient-chip';
@@ -344,13 +349,13 @@
             });
 
             renderDeck(filtered);
-            filterPanel.classList.remove('visible'); // Zamknij po filtrowaniu
+            filterPanel.classList.remove('visible');
         };
 
         function renderDeck(recipes) {
             recipeList.innerHTML = '';
             if (recipes.length === 0) {
-                recipeList.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-dim);">Brak dopasowanych zwojów...</div>`;
+                recipeList.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-dim); grid-column: 1 / -1;">Brak dopasowanych zwojów...</div>`;
                 return;
             }
 
@@ -361,7 +366,10 @@
                 else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
                 card.className = `recipe-card ${typeClass}`;
 
-                const allIcons = [...recipe.mainIngredients.map(i => i.icon), ...(recipe.tools ? recipe.tools.map(t => t.icon) : [])];
+                const mainIcons = recipe.mainIngredients.map(i => i.icon);
+                const toolIcons = recipe.tools ? recipe.tools.map(t => t.icon) : [];
+                const allIcons = [...mainIcons, ...toolIcons];
+                
                 const ingredientsHTML = allIcons.map(icon => `<span>${icon}</span>`).join('<span class="plus">+</span>');
 
                 card.innerHTML = `
