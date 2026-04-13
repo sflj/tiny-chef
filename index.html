@@ -16,6 +16,7 @@
             --type-vege: #2d3524;
             --type-fish: #242d35;
             --accent-gold: #c5a059;
+            --header-h: 52px;
         }
 
         body {
@@ -27,28 +28,140 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            padding-top: var(--header-h);
         }
 
+        /* --- UI COMPONENTS --- */
+        
         header {
+            position: fixed;
+            top: 0;
             width: 100%;
-            padding: 15px 0;
-            text-align: center;
+            height: var(--header-h);
             background: #111;
             border-bottom: 1px solid #333;
-            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.2rem;
-            letter-spacing: 3px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
             color: var(--accent-gold);
+            text-transform: uppercase;
         }
+
+        .filter-toggle {
+            position: absolute;
+            right: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px;
+        }
+
+        /* --- FILTER PANEL --- */
+
+        .filter-panel {
+            display: none; /* Ukryty domyślnie */
+            position: fixed;
+            top: var(--header-h);
+            width: 100%;
+            max-width: 400px;
+            background: #111;
+            border-bottom: 1px solid #333;
+            padding: 15px;
+            box-sizing: border-box;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 90;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .filter-panel.visible {
+            display: flex;
+        }
+
+        #tool-filter {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 8px;
+            outline: none;
+            font-family: 'Lato', sans-serif;
+        }
+
+        #tool-filter:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .ingredient-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .ingredient-chip {
+            padding: 6px 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ingredient-chip.active {
+            background: var(--type-vege);
+            border-color: var(--accent-gold);
+        }
+
+        .filter-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-btn input { display: none; }
+        .toggle-btn span {
+            padding: 8px 15px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-btn input:checked + span {
+            background: var(--type-vege);
+            border-color: #4a5d23;
+        }
+
+        #apply-filters {
+            padding: 10px 25px;
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Lato', sans-serif;
+        }
+
+        /* --- RECIPE LIST & CARDS --- */
 
         #recipe-list {
             width: 100%;
             max-width: 400px;
-            padding: 10px 15px 40px 15px;
+            padding: 20px 15px 40px 15px;
             box-sizing: border-box;
         }
 
@@ -77,15 +190,12 @@
         }
 
         .card-body {
-            /* padding: 10px 10px 25px 10px; */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            /* gap: 15px; */
         }
 
-        /* (a) Usunięte line-height */
         .result-icon {
             font-size: 4rem;
             display: flex;
@@ -99,21 +209,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap; /* Pozwala zawijać ikony, jeśli jest ich dużo */
+            flex-wrap: wrap;
             gap: 6px;
             font-size: 1.6rem;
             background: rgba(0,0,0,0.1);
             padding: 8px 16px;
-            /* border-radius: 20px; */
             border-top: 1px solid rgba(255,255,255,0.05);
             width: 100%;
+            box-sizing: border-box;
         }
 
         .plus { font-size: 0.8rem; color: var(--text-dim); }
 
         .card-footer {
             display: grid;
-            grid-template-columns: 1fr 1.2fr 1fr; /* Środek nieco szerszy na "X min" */
+            grid-template-columns: 1fr 1.2fr 1fr;
             align-items: center;
             padding: 10px 12px;
             background: rgba(0,0,0,0.2);
@@ -124,7 +234,6 @@
         .footer-center {
             text-align: center;
             color: var(--text-dim);
-            white-space: nowrap;
             font-weight: bold;
         }
 
@@ -134,119 +243,25 @@
         .card-fish { background-color: var(--type-fish); border-color: #3b5a6b; }
         .card-default { background-color: var(--type-default); border-color: #444; }
 
-        .energy-val { 
-            color: #ff5f5f; 
-            letter-spacing: 2px; /* Odstęp między serduszkami */
-        }
-        
-        .diff-val { 
-            color: #ffd700; 
-            letter-spacing: 2px; /* Odstęp między gwiazdkami */
-        }
-
-
-        .filter-panel {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            box-sizing: border-box;
-            background: #111;
-            border-bottom: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        #tool-filter {
-            width: 100%;
-            padding: 10px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            color: white;
-            font-family: 'Lato', sans-serif;
-            border-radius: 8px;
-        }
-        
-        .ingredient-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        
-        /* Styl pojedynczego składnika-przycisku */
-        .ingredient-chip {
-            padding: 6px 12px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: 0.2s;
-        }
-        
-        .ingredient-chip.active {
-            background: var(--type-vege);
-            border-color: var(--accent-gold);
-            color: white;
-        }
-        
-        .filter-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-        }
-        
-        .toggle-btn input { display: none; }
-        .toggle-btn span {
-            padding: 8px 15px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .toggle-btn input:checked + span {
-            background: var(--type-vege);
-            border-color: #4a5d23;
-        }
-        
-        #apply-filters {
-            padding: 10px 20px;
-            background: var(--accent-gold);
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: 'Lato', sans-serif;
-        }
+        .energy-val, .diff-val { letter-spacing: 2px; }
+        .energy-val { color: #ff5f5f; }
+        .diff-val { color: #ffd700; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>CAMPFIRE DECK</h1>
+        <h1>Campfire Deck</h1>
+        <span class="filter-toggle" id="filter-btn">⚙️</span>
     </header>
 
-    <div class="filter-panel">
-        <div class="filter-row">
-            <select id="tool-filter">
-                <option value="">Wszystkie narzędzia</option>
-                <option value="🥘">🥘 Patelnia</option>
-                <option value="🍲">🍲 Garnek</option>
-                <option value="🔥">🔥 Ognisko</option>
-                <option value="⛽">⛽ Kuchenka</option>
-            </select>
-        </div>
-    
-        <div id="ingredient-cloud" class="ingredient-cloud">
-            </div>
-    
+    <div class="filter-panel" id="filter-panel">
+        <select id="tool-filter">
+            <option value="">Wszystkie narzędzia</option>
+        </select>
+
+        <div id="ingredient-cloud" class="ingredient-cloud"></div>
+
         <div class="filter-footer">
             <label class="toggle-btn">
                 <input type="checkbox" id="vege-only">
@@ -259,127 +274,113 @@
     <div id="recipe-list"></div>
 
     <script>
-    const recipeList = document.getElementById('recipe-list');
+        const recipeList = document.getElementById('recipe-list');
+        const filterBtn = document.getElementById('filter-btn');
+        const filterPanel = document.getElementById('filter-panel');
+        const ingredientCloud = document.getElementById('ingredient-cloud');
+        const toolSelect = document.getElementById('tool-filter');
+        
+        let allRecipes = [];
+        let selectedIngredients = new Set();
 
-    let allRecipes = [];
-    let selectedIngredients = new Set(); // Przechowuje wybrane składniki
-    
-    async function fetchRecipes() {
-        try {
-            const cacheBuster = new Date().getTime();
-            const response = await fetch(`recipes.json?t=${cacheBuster}`);
-            if (!response.ok) throw new Error('Baza nieosiągalna.');
-            allRecipes = await response.json();
-            
-            // 1. Wygeneruj chmurę składników na podstawie danych
-            generateIngredientCloud(allRecipes);
-            // 2. Wyświetl wszystko na start
-            renderDeck(allRecipes);
-        } catch (err) {
-            recipeList.innerHTML = `<div style="padding:20px; text-align:center;">BŁĄD: ${err.message}</div>`;
-        }
-    }
+        // Toggle panelu filtrów
+        filterBtn.onclick = () => filterPanel.classList.toggle('visible');
 
-    function generateIngredientCloud(recipes) {
-        const cloud = document.getElementById('ingredient-cloud');
-        const ingredientsMap = new Map(); // Mapa ikon do nazw
-    
-        // Wyciągnij unikalne składniki
-        recipes.forEach(r => {
-            r.mainIngredients.forEach(ing => {
-                ingredientsMap.set(ing.item, ing.icon);
-            });
-        });
-    
-        cloud.innerHTML = '';
-        ingredientsMap.forEach((icon, name) => {
-            const chip = document.createElement('div');
-            chip.className = 'ingredient-chip';
-            chip.innerHTML = `<span>${icon}</span> ${name}`;
-            chip.onclick = () => {
-                chip.classList.toggle('active');
-                if (selectedIngredients.has(name)) {
-                    selectedIngredients.delete(name);
-                } else {
-                    selectedIngredients.add(name);
-                }
-            };
-            cloud.appendChild(chip);
-        });
-    }
-    
-    document.getElementById('apply-filters').onclick = () => {
-        const selectedToolIcon = document.getElementById('tool-filter').value;
-        const vegeOnly = document.getElementById('vege-only').checked;
-    
-        const filtered = allRecipes.filter(recipe => {
-            // Filtr Narzędzia
-            const toolMatch = !selectedToolIcon || 
-                (recipe.tools && recipe.tools.some(t => t.icon === selectedToolIcon));
-    
-            // Filtr Składników (Logika AND: musi mieć wszystkie zaznaczone)
-            const recipeIngNames = recipe.mainIngredients.map(i => i.item);
-            const ingMatch = Array.from(selectedIngredients).every(name => recipeIngNames.includes(name));
-    
-            // Filtr Vege
-            const vegeMatch = !vegeOnly || recipe.tags.includes('vege');
-    
-            return toolMatch && ingMatch && vegeMatch;
-        });
-    
-        renderDeck(filtered);
-    };
-
-    function renderDeck(recipes) {
-        recipeList.innerHTML = '';
-
-        recipes.forEach(recipe => {
-            const card = document.createElement('div');
-            
-            let typeClass = 'card-default';
-            if (recipe.tags.includes('vege')) typeClass = 'card-vege';
-            else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
-            
-            card.className = `recipe-card ${typeClass}`;
-
-            const mainIcons = recipe.mainIngredients.map(ing => ing.icon);
-            const toolIcons = recipe.tools ? recipe.tools.map(t => t.icon) : [];
-            const allIcons = [...mainIcons, ...toolIcons];
-            
-            const ingredientsHTML = allIcons
-                .map(icon => `<span>${icon}</span>`)
-                .join('<span class="plus">+</span>');
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <span class="recipe-name">${recipe.name}</span>
-                </div>
+        async function fetchRecipes() {
+            try {
+                const cacheBuster = new Date().getTime();
+                const response = await fetch(`recipes.json?t=${cacheBuster}`);
+                if (!response.ok) throw new Error('Baza nieosiągalna.');
+                allRecipes = await response.json();
                 
-                <div class="card-body">
-                    <div class="result-icon">${recipe.resultIcon}</div>
-                    <div class="ingredients-row">
-                        ${ingredientsHTML}
-                    </div>
-                </div>
+                generateFilters(allRecipes);
+                renderDeck(allRecipes);
+            } catch (err) {
+                recipeList.innerHTML = `<div style="padding:20px; text-align:center;">BŁĄD: ${err.message}</div>`;
+            }
+        }
 
-                <div class="card-footer">
-                    <div class="footer-left">
-                        <span class="diff-val">${"⭐".repeat(recipe.difficulty)}</span>
-                    </div>
-                    <div class="footer-center">
-                        ⏱️ ${recipe.prepTime} min
-                    </div>
-                    <div class="footer-right">
-                        <span class="energy-val">${"❤️".repeat(recipe.energy)}</span>
-                    </div>
-                </div>
-            `;
-            
-            recipeList.appendChild(card);
-        });
-    }
+        function generateFilters(recipes) {
+            const ingredientsMap = new Map();
+            const toolsSet = new Set();
 
-    fetchRecipes();
-</script>
+            recipes.forEach(r => {
+                r.mainIngredients.forEach(ing => ingredientsMap.set(ing.item, ing.icon));
+                if(r.tools) r.tools.forEach(t => toolsSet.add(t.icon));
+            });
+
+            // Narzędzia
+            toolsSet.forEach(icon => {
+                const opt = document.createElement('option');
+                opt.value = icon;
+                opt.textContent = `${icon} Narzędzie`;
+                toolSelect.appendChild(opt);
+            });
+
+            // Składniki
+            ingredientsMap.forEach((icon, name) => {
+                const chip = document.createElement('div');
+                chip.className = 'ingredient-chip';
+                chip.innerHTML = `${icon} ${name}`;
+                chip.onclick = () => {
+                    chip.classList.toggle('active');
+                    selectedIngredients.has(name) ? selectedIngredients.delete(name) : selectedIngredients.add(name);
+                };
+                ingredientCloud.appendChild(chip);
+            });
+        }
+
+        document.getElementById('apply-filters').onclick = () => {
+            const selectedTool = toolSelect.value;
+            const vegeOnly = document.getElementById('vege-only').checked;
+
+            const filtered = allRecipes.filter(recipe => {
+                const toolMatch = !selectedTool || (recipe.tools && recipe.tools.some(t => t.icon === selectedTool));
+                const recipeIngs = recipe.mainIngredients.map(i => i.item);
+                const ingMatch = Array.from(selectedIngredients).every(name => recipeIngs.includes(name));
+                const vegeMatch = !vegeOnly || recipe.tags.includes('vege');
+
+                return toolMatch && ingMatch && vegeMatch;
+            });
+
+            renderDeck(filtered);
+            filterPanel.classList.remove('visible'); // Zamknij po filtrowaniu
+        };
+
+        function renderDeck(recipes) {
+            recipeList.innerHTML = '';
+            if (recipes.length === 0) {
+                recipeList.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-dim);">Brak dopasowanych zwojów...</div>`;
+                return;
+            }
+
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                let typeClass = 'card-default';
+                if (recipe.tags.includes('vege')) typeClass = 'card-vege';
+                else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
+                card.className = `recipe-card ${typeClass}`;
+
+                const allIcons = [...recipe.mainIngredients.map(i => i.icon), ...(recipe.tools ? recipe.tools.map(t => t.icon) : [])];
+                const ingredientsHTML = allIcons.map(icon => `<span>${icon}</span>`).join('<span class="plus">+</span>');
+
+                card.innerHTML = `
+                    <div class="card-header"><span class="recipe-name">${recipe.name}</span></div>
+                    <div class="card-body">
+                        <div class="result-icon">${recipe.resultIcon}</div>
+                        <div class="ingredients-row">${ingredientsHTML}</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="footer-left"><span class="diff-val">${"⭐".repeat(recipe.difficulty)}</span></div>
+                        <div class="footer-center">⏱️ ${recipe.prepTime} min</div>
+                        <div class="footer-right"><span class="energy-val">${"❤️".repeat(recipe.energy)}</span></div>
+                    </div>
+                `;
+                recipeList.appendChild(card);
+            });
+        }
+
+        fetchRecipes();
+    </script>
 </body>
 </html>
