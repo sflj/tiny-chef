@@ -16,7 +16,11 @@ const filterPanel = document.getElementById('filter-panel');
 const recipeList = document.getElementById('recipe-list');
 const accordionContainer = document.getElementById('filter-accordion-container');
 
-filterBtn.onclick = () => filterPanel.classList.toggle('visible');
+// Otwieranie/Zamykanie przez guzik w headerze
+filterBtn.onclick = () => {
+    const isVisible = filterPanel.classList.toggle('visible');
+    document.body.classList.toggle('modal-open', isVisible);
+};
 
 // Funkcja tłumacząca
 function t(key, section = 'items') {
@@ -142,6 +146,7 @@ function setSort(type, btn) {
 document.getElementById('apply-filters').onclick = () => {
     applyAndRender();
     filterPanel.classList.remove('visible');
+    document.body.classList.remove('modal-open');
 };
 
 function applyAndRender() {
@@ -225,9 +230,10 @@ function showEmptyState() {
     `;
 }
 
-// Nowa prosta funkcja do otwierania panelu
+// Funkcja wywoływana z Empty State
 function openFilterPanel() {
     filterPanel.classList.add('visible');
+    document.body.classList.add('modal-open');
 }
 
 initApp();
