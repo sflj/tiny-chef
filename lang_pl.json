@@ -1,0 +1,46 @@
+{
+  "ui": {
+    "title": "Campfire Deck",
+    "sort_label": "Sortuj:",
+    "filter_btn": "Zastosuj",
+    "vege_only": "🌿 Tylko Vege",
+    "tool_header": "Sprzęt (Wybierz jeden)",
+    "no_results": "Przeszukaliśmy knieje, ale nie znaleźliśmy nic z:",
+    "reset_filters": "Zmień strategię",
+    "prep_time": "min"
+  },
+  "items": {
+    "onion": "cebula",
+    "tomatoes": "pomidory",
+    "pepper": "papryka",
+    "egg": "jajko",
+    "chicken": "kurczak",
+    "beef": "wołowina",
+    "bacon": "boczek",
+    "sausage": "kiełbasa",
+    "fish": "ryba",
+    "ham": "szynka",
+    "cheese": "ser",
+    "milk": "mleko",
+    "butter": "masło",
+    "pan": "patelnia",
+    "pot": "garnek",
+    "skewers": "szpikulce",
+    "fire": "ognisko",
+    "bottle": "butelka",
+    "bread": "chleb",
+    "water": "woda",
+    "sugar": "cukier",
+    "flour": "mąka",
+    "zucchini": "cukinia",
+    "mushroom": "grzyby",
+    "lettuce": "sałata",
+    "garlic": "czosnek"
+  },
+  "categories": {
+    "vege_fruit": "Warzywa i Owoce",
+    "proteins": "Białko i Mięso",
+    "dairy": "Nabiał",
+    "others": "Inne"
+  }
+}
