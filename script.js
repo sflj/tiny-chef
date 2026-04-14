@@ -167,6 +167,12 @@ function applyAndRender() {
 
 function renderDeck(recipes) {
     recipeList.innerHTML = '';
+
+    if (recipes.length === 0) {
+        showEmptyState();
+        return;
+    }
+
     recipes.forEach(r => {
         const card = document.createElement('div');
         let typeClass = 'card-default';
@@ -190,6 +196,38 @@ function renderDeck(recipes) {
         `;
         recipeList.appendChild(card);
     });
+}
+
+function showEmptyState() {
+    // Zbierz ikony wybranych filtrów do raportu
+    const activeIcons = [];
+    if (selectedToolIcon) activeIcons.push(selectedToolIcon);
+    
+    selectedIngredients.forEach(itemName => {
+        allRecipes.some(r => {
+            const ing = r.mainIngredients.find(i => i.item === itemName);
+            if (ing) {
+                activeIcons.push(ing.icon);
+                return true;
+            }
+            return false;
+        });
+    });
+
+    if (document.getElementById('vege-only').checked) activeIcons.push('🌿');
+
+    recipeList.innerHTML = `
+        <div class="empty-state">
+            <p>${t('no_results', 'ui')}</p>
+            <div class="empty-state-icons">${activeIcons.join(' ')}</div>
+            <button class="reset-btn" onclick="openFilterPanel()">${t('reset_filters', 'ui')}</button>
+        </div>
+    `;
+}
+
+// Nowa prosta funkcja do otwierania panelu
+function openFilterPanel() {
+    filterPanel.classList.add('visible');
 }
 
 initApp();
