@@ -9,6 +9,16 @@
     --header-h: 52px;
 }
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+.ingredient-chip:focus,
+summary:focus {
+    outline: none;
+}
+
 body {
     margin: 0;
     background-color: var(--bg-color);
