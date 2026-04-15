@@ -259,19 +259,13 @@ function showRecipeDetails(recipe) {
         </div>
     `).join('');
 
-    const toolsHtml = (recipe.tools && recipe.tools.length > 0) ? `
-        <div class="modal-tools-section">
-            <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-left: 10px;">
-                ${t('tools_label', 'ui')}
-            </div>
+    const toolsHtml = (recipe.tools && recipe.tools.length > 0) ? 
             ${recipe.tools.map(tool => `
-                <div class="modal-ing-row modal-tool-row">
+                <div class="modal-ing-row">
                     <span class="modal-ing-name"><span>${tool.icon}</span> ${t(tool.item, 'items')}</span>
-                    <span class="modal-ing-value">ok</span>
+                    <span class="modal-ing-value">1 ${t('pcs', 'units')}</span>
                 </div>
-            `).join('')}
-        </div>
-    ` : '';
+            `).join('') : '';
 
     // Określenie klasy koloru (jak na liście)
     let typeClass = 'card-default';
