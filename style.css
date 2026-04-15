@@ -405,10 +405,7 @@ input:checked + .slider:before {
 /* --- MODAL INGREDIENTS LIST --- */
 .modal-ing-container {
     width: 85%;
-    margin: 20px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    margin: 0 auto 20px auto;
 }
 
 .modal-ing-row {
@@ -416,8 +413,11 @@ input:checked + .slider:before {
     justify-content: space-between;
     align-items: center;
     font-size: 0.95rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding-bottom: 4px;
+    padding: 10px;
+}
+
+.modal-ing-row:not(:last-child) {
+    border-bottom: 1px solid rgba(255,255,255,0.075);
 }
 
 .modal-ing-name {
