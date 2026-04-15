@@ -260,7 +260,7 @@ function showRecipeDetails(recipe) {
     `).join('');
 
     const toolsHtml = (recipe.tools && recipe.tools.length > 0) ? 
-            ${recipe.tools.map(tool => `
+            recipe.tools.map(tool => `
                 <div class="modal-ing-row">
                     <span class="modal-ing-name"><span>${tool.icon}</span> ${t(tool.item, 'items')}</span>
                     <span class="modal-ing-value">1 ${t('pcs', 'units')}</span>
