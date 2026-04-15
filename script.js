@@ -188,6 +188,8 @@ function renderDeck(recipes) {
         if (r.tags.includes('vege')) typeClass = 'card-vege';
         else if (r.tags.includes('fish')) typeClass = 'card-fish';
         card.className = `recipe-card ${typeClass}`;
+        card.style.cursor = 'pointer'; // Kursor rączki na desktopie
+        card.onclick = () => showRecipeDetails(r);
 
         const icons = [...r.mainIngredients.map(i => i.icon), ...(r.tools ? r.tools.map(t => t.icon) : [])];
         
@@ -239,5 +241,72 @@ function openFilterPanel() {
     filterPanel.classList.add('visible');
     document.body.classList.add('modal-open');
 }
+
+function showRecipeDetails(recipe) {
+    const backdrop = document.getElementById('recipe-modal');
+    const cardContainer = document.getElementById('modal-card-container');
+    
+    // Generowanie wierszy składników (Wizja punkt E)
+    const ingredientsHtml = recipe.mainIngredients.map(ing => `
+        <div class="modal-ing-row">
+            <span class="modal-ing-name">
+                <span>${ing.icon}</span> 
+                ${t(ing.item, 'items')}
+            </span>
+            <span class="modal-ing-value">
+                ${ing.amount} ${t(ing.unit, 'units')}
+            </span>
+        </div>
+    `).join('');
+
+    // Określenie klasy koloru (jak na liście)
+    let typeClass = 'card-default';
+    if (recipe.tags.includes('vege')) typeClass = 'card-vege';
+    else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
+
+    // Budowanie karty (Wizja punkt B i E)
+    cardContainer.innerHTML = `
+        <div class="recipe-card ${typeClass}" style="box-shadow: 0 0 30px rgba(0,0,0,0.8); border: 1px solid var(--accent-gold);">
+            <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
+            <div class="card-body">
+                <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
+                <div class="modal-ing-container">
+                    ${ingredientsHtml}
+                </div>
+            </div>
+            <div class="card-footer" style="padding: 15px 12px;">
+                <div class="footer-left"><span class="diff-val">${"👨‍🍳".repeat(recipe.difficulty)}</span></div>
+                <div class="footer-center">⏱️ ${recipe.prepTime} ${t('prep_time', 'ui')}</div>
+                <div class="footer-right"><span class="energy-val">${"❤️".repeat(recipe.energy)}</span></div>
+            </div>
+        </div>
+    `;
+
+    // Wyświetlanie z animacją
+    backdrop.style.display = 'flex';
+    setTimeout(() => {
+        backdrop.classList.add('active');
+        document.body.classList.add('modal-open');
+    }, 10);
+}
+
+// Obsługa zamykania
+function closeModal() {
+    const backdrop = document.getElementById('recipe-modal');
+    backdrop.classList.remove('active');
+    setTimeout(() => {
+        backdrop.style.display = 'none';
+        if (!filterPanel.classList.contains('visible')) {
+            document.body.classList.remove('modal-open');
+        }
+    }, 300); // Czas trwania animacji CSS
+}
+
+document.getElementById('close-modal-btn').onclick = closeModal;
+document.getElementById('recipe-modal').onclick = (e) => {
+    if (e.target.id === 'recipe-modal') closeModal();
+};
+
+// Pamiętaj o dodaniu card.onclick w renderDeck!
 
 initApp();
