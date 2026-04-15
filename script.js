@@ -259,6 +259,20 @@ function showRecipeDetails(recipe) {
         </div>
     `).join('');
 
+    const toolsHtml = (recipe.tools && recipe.tools.length > 0) ? `
+        <div class="modal-tools-section">
+            <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-left: 10px;">
+                ${t('tools_label', 'ui')}
+            </div>
+            ${recipe.tools.map(tool => `
+                <div class="modal-ing-row modal-tool-row">
+                    <span class="modal-ing-name"><span>${tool.icon}</span> ${t(tool.item, 'items')}</span>
+                    <span class="modal-ing-value">ok</span>
+                </div>
+            `).join('')}
+        </div>
+    ` : '';
+
     // Określenie klasy koloru (jak na liście)
     let typeClass = 'card-default';
     if (recipe.tags.includes('vege')) typeClass = 'card-vege';
@@ -272,6 +286,7 @@ function showRecipeDetails(recipe) {
                 <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
                 <div class="modal-ing-container">
                     ${ingredientsHtml}
+                    ${toolsHtml}
                 </div>
             </div>
             <div class="card-footer" style="padding: 15px 12px;">
