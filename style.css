@@ -99,12 +99,11 @@ header h1 {
 }
 
 .sort-section {
+    padding: 15px;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    padding-bottom: 5px;
+    gap: 8px;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0; /* Nie pozwala się zgniatać */
 }
 
 .sort-btn {
@@ -122,7 +121,7 @@ header h1 {
     background: #333;
 }
 
-.filter-scroll-area {
+/* .filter-scroll-area {
     flex: 1; 
     overflow-y: auto;
     overflow-x: hidden;
@@ -130,6 +129,13 @@ header h1 {
     display: flex;
     flex-direction: column;
     gap: 8px;
+} */
+
+.filter-scroll-area {
+    flex-grow: 1;      /* Zajmuje całą dostępną przestrzeń */
+    overflow-y: auto;  /* Tylko tu pojawia się pasek przewijania */
+    padding: 10px 15px;
+    -webkit-overflow-scrolling: touch; /* Gładki scroll na iOS */
 }
 
 details {
@@ -203,12 +209,26 @@ details[open] summary::after {
     border-color: var(--accent-gold);
 }
 
-.filter-footer {
+/* .filter-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 10px;
     border-top: 1px solid #222;
+} */
+
+.filter-footer {
+    flex-shrink: 0;    /* Nie pozwala się zgniatać */
+    padding: 20px;
+    background: #1a1a1a; /* Nieco ciemniejszy, żeby odciąć od listy */
+    border-top: 1px solid #333;
+    
+    /* Obsługa safe-area na dole (paski nawigacyjne iOS/Android) */
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 /* --- RECIPE GRID --- */
