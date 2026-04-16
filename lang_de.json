@@ -1,0 +1,60 @@
+{
+  "ui": {
+    "title": "tinyCHEF",
+    "sort_label": "Sortieren:",
+    "filter_btn": "Anwenden",
+    "vege_only": "Nur Veggie",
+    "tool_header": "Ausrüstung (Wähle eins)",
+    "no_results": "Wir haben die Wildnis durchsucht, aber nichts gefunden mit:",
+    "reset_filters": "Strategie ändern",
+    "prep_time": "Min."
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "pcs": "Stk.",
+    "clove": "Zehe",
+    "slice": "Scheibe",
+    "tsp": "TL",
+    "tbsp": "EL"
+  },
+  "items": {
+    "pasta": "Nudeln",
+    "tuna": "Thunfisch",
+    "potato": "Kartoffel",
+    "carrot": "Karotte",
+    "lemon": "Zitrone",
+    "onion": "Zwiebel",
+    "tomatoes": "Tomaten",
+    "pepper": "Paprika",
+    "egg": "Ei",
+    "chicken": "Hähnchen",
+    "beef": "Rindfleisch",
+    "bacon": "Speck",
+    "sausage": "Wurst",
+    "fish": "Fisch",
+    "ham": "Schinken",
+    "cheese": "Käse",
+    "milk": "Milch",
+    "butter": "Butter",
+    "pan": "Pfanne",
+    "pot": "Topf",
+    "skewers": "Spieße",
+    "fire": "Lagerfeuer",
+    "bottle": "Flasche",
+    "bread": "Brot",
+    "water": "Wasser",
+    "sugar": "Zucker",
+    "flour": "Mehl",
+    "zucchini": "Zucchini",
+    "mushroom": "Pilze",
+    "lettuce": "Salat",
+    "garlic": "Knoblauch"
+  },
+  "categories": {
+    "vege_fruit": "Obst & Gemüse",
+    "proteins": "Protein & Fleisch",
+    "dairy": "Milchprodukte",
+    "others": "Sonstiges"
+  }
+}
