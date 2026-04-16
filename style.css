@@ -273,16 +273,7 @@ details[open] summary::after {
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-}
-
-.apply-filters-btn {
-    padding: 20px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* Safe area dla iPhone */
-    background: #222; /* Lekko inny odcień, żeby odciąć guzik */
-    border-top: 1px solid var(--accent-gold);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #000;
 }
 
 /* --- EMPTY STATE --- */
