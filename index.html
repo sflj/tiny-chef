@@ -16,20 +16,49 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <svg style="display: none;">
+      <symbol id="icon-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
+      </symbol>
+    
+      <symbol id="icon-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/>
+      </symbol>
+    
+      <symbol id="icon-time" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </symbol>
+    
+      <symbol id="icon-chef" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18h12v-3c0-3-2-5-4-5H10c-2 0-4 2-4 5v3Z"/><path d="M6 10c0-2 2-3 2-3s1.5 2 4 2 4-2 4-2 2 1 2 3"/>
+      </symbol>
+    
+      <symbol id="icon-energy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </symbol>
+    </svg>
 
     <header>
         <h1 id="ui-title"></h1>
         <span class="filter-toggle" id="filter-btn">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+            <svg class="svg-icon icon-filter"><use href="#icon-filter"></use></svg>
         </span>
     </header>
 
     <div class="filter-panel" id="filter-panel">
         <div class="sort-section">
-            <button class="sort-btn active" id="sort-name" onclick="setSort('name', this)">A-Z</button>
-            <button class="sort-btn" onclick="setSort('energy', this)">❤️</button>
-            <button class="sort-btn" onclick="setSort('prepTime', this)">⏱️</button>
-            <button class="sort-btn" onclick="setSort('difficulty', this)">👨‍🍳</button>
+            <button class="sort-btn active" id="sort-name" onclick="setSort('name', this)">
+                <svg class="svg-icon icon-sort"><use href="#icon-sort"></use></svg>
+            </button>
+            <button class="sort-btn" onclick="setSort('energy', this)">
+                <svg class="svg-icon icon-energy"><use href="#icon-energyr"></use></svg>
+            </button>
+            <button class="sort-btn" onclick="setSort('prepTime', this)">
+                <svg class="svg-icon icon-time"><use href="#icon-time"></use></svg>
+            </button>
+            <button class="sort-btn" onclick="setSort('difficulty', this)">
+                <svg class="svg-icon icon-chef"><use href="#icon-chef"></use></svg>
+            </button>
             <label class="vege-toggle">
                 <div class="switch">
                     <input type="checkbox" id="vege-only">
