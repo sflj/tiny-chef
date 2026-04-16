@@ -10,14 +10,14 @@
     "prep_time": "min"
   },
   "units": {
-    "pcs": "szt.",
-    "clove": "ząb.",
     "g": "g",
     "ml": "ml",
+    "pcs": "szt.",
+    "clove": "ząb.",
     "slice": "plast.",
-    "tsp": "łyżeczka",
-    "tbsp": "łyżka"
-  },
+    "tsp": "łyżecz.",
+    "tbsp": "łyżk."
+}
   "items": {
     "pasta": "makaron",
     "tuna": "tuńczyk",
