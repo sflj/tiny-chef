@@ -58,7 +58,6 @@ header h1 {
     font-size: 1.1rem;
     letter-spacing: 2px;
     color: var(--accent-gold);
-    text-transform: uppercase;
 }
 
 .filter-toggle {
