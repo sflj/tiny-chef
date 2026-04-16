@@ -253,13 +253,18 @@ function formatAmount(amount) {
 
     // Mapa ułamków (klucz to wartość dziesiętna, wartość to ułamek)
     const fractionMap = {
-        0.5: "1/2",
-        0.25: "1/4",
-        0.75: "3/4",
-        0.33: "1/3",
-        0.66: "2/3",
-        0.2: "1/5",
-        0.125: "1/8"
+        0.5: "½",
+        0.25: "¼",
+        0.75: "¾",
+        0.33: "⅓",
+        0.66: "⅔"
+        // 0.5: "1/2",
+        // 0.25: "1/4",
+        // 0.75: "3/4",
+        // 0.33: "1/3",
+        // 0.66: "2/3",
+        // 0.2: "1/5",
+        // 0.125: "1/8"
     };
 
     // Szukamy pasującego ułamka w mapie (z małym marginesem błędu dla floatów)
