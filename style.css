@@ -269,6 +269,11 @@ details[open] summary .svg-icon {
 .energy-val { color: #ff5f5f; }
 .diff-val { color: #ffd700; }
 
+.recipe-card-standalone {
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    border: 2px solid var(--accent-gold);
+}
+
 #apply-filters {
     padding: 10px 25px;
     background: var(--accent-gold);
