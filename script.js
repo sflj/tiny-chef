@@ -27,6 +27,10 @@ function t(key, section = 'items') {
     return (translations[section] && translations[section][key]) ? translations[section][key] : key;
 }
 
+function getIcon(name) {
+    return `<svg class="icon icon-${name}"><use href="#icon-${name}"></use></svg>`;
+}
+
 async function initApp() {
     const userLang = navigator.language.split('-')[0];
     const supported = ['pl', 'en', 'de'];
@@ -80,7 +84,7 @@ function generateFilters(recipes) {
     const toolDet = document.createElement('details');
     toolDet.open = true;
     const toolSum = document.createElement('summary');
-    toolSum.textContent = t('tool_header', 'ui');
+    toolSum.textContent = t('tool_header', 'ui') + getIcon('chevron');
     toolDet.appendChild(toolSum);
 
     const toolCont = document.createElement('div');
