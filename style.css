@@ -162,16 +162,11 @@ summary {
     align-items: center;
 }
 
-/* Dodajemy nasz chevron */
-summary::after {
-    content: '\25BC'; /* Kod znaku strzałki w dół (▼) */
-    font-size: 0.7rem;
-    transition: transform 0.3s ease;
-    opacity: 0.7;
+details summary .svg-icon {
+    transition: transform 200ms ease;
 }
 
-/* Gdy akordeon jest otwarty - obracamy chevron */
-details[open] summary::after {
+details[open] summary .svg-icon {
     transform: rotate(180deg);
 }
 
