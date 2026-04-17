@@ -287,16 +287,11 @@ function showRecipeDetails(recipe) {
     const backdrop = document.getElementById('recipe-modal');
     const cardContainer = document.getElementById('modal-card-container');
     
-    // Generowanie wierszy składników (Wizja punkt E)
+    // 1. Generowanie treści (Składniki i Narzędzia)
     const ingredientsHtml = recipe.mainIngredients.map(ing => `
         <div class="modal-ing-row">
-            <span class="modal-ing-name">
-                <span>${ing.icon}</span> 
-                ${t(ing.item, 'items')}
-            </span>
-            <span class="modal-ing-value">
-                ${formatAmount(ing.amount)} ${t(ing.unit, 'units')}
-            </span>
+            <span class="modal-ing-name"><span>${ing.icon}</span> ${t(ing.item, 'items')}</span>
+            <span class="modal-ing-value">${formatAmount(ing.amount)} ${t(ing.unit, 'units')}</span>
         </div>
     `).join('');
 
@@ -308,37 +303,139 @@ function showRecipeDetails(recipe) {
                 </div>
             `).join('') : '';
 
-    // Określenie klasy koloru (jak na liście)
     let typeClass = 'card-default';
     if (recipe.tags.includes('vege')) typeClass = 'card-vege';
     else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
 
-    // Budowanie karty (Wizja punkt B i E)
+    // 2. Budowanie nowej struktury 3D
     cardContainer.innerHTML = `
-        <div class="recipe-card ${typeClass} recipe-card-standalone">
-            <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
-            <div class="card-body">
-                <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
-                <div class="modal-ing-container">
-                    ${ingredientsHtml}
-                    ${toolsHtml}
+        <div class="card-scene">
+            <div class="card-inner" id="recipe-card-inner">
+                
+                <div class="recipe-card ${typeClass} card-face card-front">
+                    <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
+                    <div class="card-body">
+                        <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
+                        <div class="modal-ing-container">
+                            ${ingredientsHtml}
+                            ${toolsHtml}
+                        </div>
+                    </div>
+                    <div class="card-footer" style="padding: 15px 12px;">
+                        <div class="footer-left"><span class="diff-val">${"👨‍🍳".repeat(recipe.difficulty)}</span></div>
+                        <div class="footer-center">⏱️ ${recipe.prepTime} ${t('prep_time', 'ui')}</div>
+                        <div class="footer-right"><span class="energy-val">${"❤️".repeat(recipe.energy)}</span></div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer" style="padding: 15px 12px;">
-                <div class="footer-left"><span class="diff-val">${"👨‍🍳".repeat(recipe.difficulty)}</span></div>
-                <div class="footer-center">⏱️ ${recipe.prepTime} ${t('prep_time', 'ui')}</div>
-                <div class="footer-right"><span class="energy-val">${"❤️".repeat(recipe.energy)}</span></div>
+
+                <div class="recipe-card ${typeClass} card-face card-back">
+                    <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${t('instructions', 'ui') || 'Przygotowanie'}</span></div>
+                    <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📜</div>
+                        <p style="padding: 0 20px; color: #ccc; font-size: 0.9rem;">
+                            Wkrótce pojawią się tu kroki przygotowania...
+                        </p>
+                        <div style="margin-top: 20px; color: var(--accent-gold); font-weight: bold;">
+                            ✨ +10 do humoru
+                        </div>
+                    </div>
+                    <div class="card-footer"></div>
+                </div>
+
             </div>
         </div>
     `;
 
-    // Wyświetlanie z animacją
+    // 3. Obsługa obracania (Logic)
+    const cardInner = document.getElementById('recipe-card-inner');
+    let touchStartX = 0;
+
+    // Kliknięcie (dla desktopu)
+    cardInner.onclick = (e) => {
+        // Nie obracaj, jeśli kliknięto w coś interaktywnego (jeśli dodasz buttony w środku karty)
+        if (e.target.closest('button, a')) return;
+        cardInner.classList.toggle('is-flipped');
+    };
+
+    // Swipe (dla mobile)
+    cardInner.ontouchstart = (e) => {
+        touchStartX = e.touches[0].clientX;
+    };
+
+    cardInner.ontouchend = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+        
+        // Jeśli przesunięcie w poziomie jest większe niż 50px - obróć
+        if (Math.abs(diff) > 50) {
+            cardInner.classList.toggle('is-flipped');
+        }
+    };
+
+    // 4. Wyświetlanie modala
     backdrop.style.display = 'flex';
     setTimeout(() => {
         backdrop.classList.add('active');
         document.body.classList.add('modal-open');
     }, 10);
 }
+
+// function showRecipeDetails(recipe) {
+//     const backdrop = document.getElementById('recipe-modal');
+//     const cardContainer = document.getElementById('modal-card-container');
+    
+//     // Generowanie wierszy składników (Wizja punkt E)
+//     const ingredientsHtml = recipe.mainIngredients.map(ing => `
+//         <div class="modal-ing-row">
+//             <span class="modal-ing-name">
+//                 <span>${ing.icon}</span> 
+//                 ${t(ing.item, 'items')}
+//             </span>
+//             <span class="modal-ing-value">
+//                 ${formatAmount(ing.amount)} ${t(ing.unit, 'units')}
+//             </span>
+//         </div>
+//     `).join('');
+
+//     const toolsHtml = (recipe.tools && recipe.tools.length > 0) ? 
+//             recipe.tools.map(tool => `
+//                 <div class="modal-ing-row">
+//                     <span class="modal-ing-name"><span>${tool.icon}</span> ${t(tool.item, 'items')}</span>
+//                     <span class="modal-ing-value">1 ${t('pcs', 'units')}</span>
+//                 </div>
+//             `).join('') : '';
+
+//     // Określenie klasy koloru (jak na liście)
+//     let typeClass = 'card-default';
+//     if (recipe.tags.includes('vege')) typeClass = 'card-vege';
+//     else if (recipe.tags.includes('fish')) typeClass = 'card-fish';
+
+//     // Budowanie karty (Wizja punkt B i E)
+//     cardContainer.innerHTML = `
+//         <div class="recipe-card ${typeClass} recipe-card-standalone">
+//             <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
+//             <div class="card-body">
+//                 <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
+//                 <div class="modal-ing-container">
+//                     ${ingredientsHtml}
+//                     ${toolsHtml}
+//                 </div>
+//             </div>
+//             <div class="card-footer" style="padding: 15px 12px;">
+//                 <div class="footer-left"><span class="diff-val">${"👨‍🍳".repeat(recipe.difficulty)}</span></div>
+//                 <div class="footer-center">⏱️ ${recipe.prepTime} ${t('prep_time', 'ui')}</div>
+//                 <div class="footer-right"><span class="energy-val">${"❤️".repeat(recipe.energy)}</span></div>
+//             </div>
+//         </div>
+//     `;
+
+//     // Wyświetlanie z animacją
+//     backdrop.style.display = 'flex';
+//     setTimeout(() => {
+//         backdrop.classList.add('active');
+//         document.body.classList.add('modal-open');
+//     }, 10);
+// }
 
 // Obsługa zamykania
 function closeModal() {
