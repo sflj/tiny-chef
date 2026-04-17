@@ -139,7 +139,7 @@ header h1 {
 details {
     width: 100%;
     background: #161616;
-    border-bottom: 1px solid #222;
+    margin-bottom: 2px;
 }
 
 /* Ukrywamy domyślny trójkącik w różnych przeglądarkach */
@@ -177,37 +177,25 @@ details[open] summary .svg-icon {
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    border-top: 1px solid #222;
 }
 
 .ingredient-chip {
     padding: 6px 12px;
-    background: #1a1a1a;
-    border: 1px solid #444;
+    background: #222;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: 0.2s;
     text-transform: capitalize;
 }
 
 .ingredient-chip.active {
-    background: var(--type-vege);
-    border-color: var(--accent-gold);
+    background: var(--accent-gold);
 }
 
 .ingredient-chip.tool-active {
-    background: var(--type-vege);
-    border-color: var(--accent-gold);
+    background: var(--accent-gold);
 }
-
-/* .filter-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 10px;
-    border-top: 1px solid #222;
-} */
 
 .filter-footer {
     flex-shrink: 0;    /* Nie pozwala się zgniatać */
