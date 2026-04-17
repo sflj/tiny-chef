@@ -329,17 +329,14 @@ function showRecipeDetails(recipe) {
                 </div>
 
                 <div class="recipe-card ${typeClass} card-face card-back">
-                    <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${t('instructions', 'ui') || 'Przygotowanie'}</span></div>
-                    <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
+                    <div class="card-body">
                         <div style="font-size: 4rem; margin-bottom: 20px;">📜</div>
-                        <p style="padding: 0 20px; color: #ccc; font-size: 0.9rem;">
-                            Wkrótce pojawią się tu kroki przygotowania...
-                        </p>
-                        <div style="margin-top: 20px; color: var(--accent-gold); font-weight: bold;">
-                            ✨ +10 do humoru
+                        <div style="color: var(--accent-gold); font-weight: bold;">
+                            ✨ +${10 * recipe.energy} do poczucia sytości
                         </div>
                     </div>
-                    <div class="card-footer"></div>
+                    <div></div>
                 </div>
 
             </div>
@@ -347,36 +344,92 @@ function showRecipeDetails(recipe) {
     `;
 
     // 3. Obsługa obracania (Logic)
+    // const cardInner = document.getElementById('recipe-card-inner');
+    // let touchStartX = 0;
+    // let currentRotation = 0; // Śledzimy stopnie
+
+    // const flipCard = (direction) => {
+    //     if (direction === 'left') currentRotation -= 180;
+    //     else currentRotation += 180;
+        
+    //     cardInner.style.transform = `rotateY(${currentRotation}deg)`;
+    // };
+
+    // // Kliknięcie (zawsze w jedną stronę)
+    // cardInner.onclick = (e) => {
+    //     if (e.target.closest('button, a')) return;
+    //     flipCard('left'); 
+    // };
+
+    // // Swipe
+    // cardInner.ontouchstart = (e) => {
+    //     touchStartX = e.touches[0].clientX;
+    // };
+
+    // cardInner.ontouchend = (e) => {
+    //     const touchEndX = e.changedTouches[0].clientX;
+    //     const diff = touchStartX - touchEndX;
+        
+    //     if (Math.abs(diff) > 50) {
+    //         // Jeśli diff > 0, to swipe w lewo, jeśli < 0 to w prawo
+    //         flipCard(diff > 0 ? 'left' : 'right');
+    //     }
+    // };
+
     const cardInner = document.getElementById('recipe-card-inner');
-    let touchStartX = 0;
-    let currentRotation = 0; // Śledzimy stopnie
-
-    const flipCard = (direction) => {
-        if (direction === 'left') currentRotation -= 180;
-        else currentRotation += 180;
-        
-        cardInner.style.transform = `rotateY(${currentRotation}deg)`;
+    let startX = 0;
+    let currentRotation = 0; // Kąt, przy którym karta skończyła poprzedni ruch
+    let isDragging = false;
+    
+    // Funkcja pomocnicza do ustawiania rotacji bez transition
+    const setRotation = (deg, useTransition = false) => {
+        cardInner.style.transition = useTransition ? "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)" : "none";
+        cardInner.style.transform = `rotateY(${deg}deg)`;
     };
-
-    // Kliknięcie (zawsze w jedną stronę)
+    
+    // Kliknięcie (zostawiamy dla desktopu)
     cardInner.onclick = (e) => {
-        if (e.target.closest('button, a')) return;
-        flipCard('left'); 
+        if (e.target.closest('button, a') || isDragging) return;
+        currentRotation -= 180;
+        setRotation(currentRotation, true);
     };
-
-    // Swipe
+    
+    // Obsługa dotyku
     cardInner.ontouchstart = (e) => {
-        touchStartX = e.touches[0].clientX;
+        startX = e.touches[0].clientX;
+        isDragging = false; 
+        cardInner.style.transition = "none"; // Wyłączamy animację na czas ruchu palca
     };
-
-    cardInner.ontouchend = (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const diff = touchStartX - touchEndX;
+    
+    cardInner.ontouchmove = (e) => {
+        const currentX = e.touches[0].clientX;
+        const diffX = startX - currentX;
         
-        if (Math.abs(diff) > 50) {
-            // Jeśli diff > 0, to swipe w lewo, jeśli < 0 to w prawo
-            flipCard(diff > 0 ? 'left' : 'right');
+        // Próg 5px, żeby odróżnić tapnięcie od celowego ruchu
+        if (Math.abs(diffX) > 5) {
+            isDragging = true;
+            // Przelicznik: 1px ruchu = ok. 0.5 stopnia obrotu (dostosuj czułość)
+            const rotationProgress = currentRotation - (diffX * 0.8);
+            cardInner.style.transform = `rotateY(${rotationProgress}deg)`;
         }
+    };
+    
+    cardInner.ontouchend = (e) => {
+        if (!isDragging) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const totalDiffX = startX - endX;
+    
+        // Jeśli przesunięto o więcej niż 100px, kończymy obrót
+        if (Math.abs(totalDiffX) > 100) {
+            currentRotation += (totalDiffX > 0) ? -180 : 180;
+        } 
+        // Jeśli mniej - karta wróci do poprzedniej stabilnej pozycji (currentRotation)
+        
+        setRotation(currentRotation, true);
+        
+        // Mały reset flagi dragging po animacji
+        setTimeout(() => { isDragging = false; }, 100);
     };
 
     // 4. Wyświetlanie modala
