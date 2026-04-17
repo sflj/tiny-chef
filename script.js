@@ -315,7 +315,7 @@ function showRecipeDetails(recipe) {
 
     // Budowanie karty (Wizja punkt B i E)
     cardContainer.innerHTML = `
-        <div class="recipe-card ${typeClass}" style="box-shadow: 0 0 30px rgba(0,0,0,0.8); border: 1px solid var(--accent-gold);">
+        <div class="recipe-card ${typeClass} recipe-card-standalone">
             <div class="card-header"><span class="recipe-name" style="font-size: 1.3rem;">${recipe.name}</span></div>
             <div class="card-body">
                 <div class="result-icon" style="font-size: 5rem; height: 120px;">${recipe.resultIcon}</div>
