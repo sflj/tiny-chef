@@ -28,7 +28,7 @@ function t(key, section = 'items') {
 }
 
 function getIcon(name) {
-    return `<svg class="icon icon-${name}"><use href="#icon-${name}"></use></svg>`;
+    return `<svg class="svg-icon icon-${name}"><use href="#icon-${name}"></use></svg>`;
 }
 
 async function initApp() {
