@@ -60,6 +60,10 @@ body.modal-open {
     color: #ff4d4d;
 }
 
+.app-layout {
+    display: block; /* Na mobile standardowy przepływ */
+}
+
 /* --- HEADER --- */
 header {
     position: fixed;
@@ -91,7 +95,7 @@ header h1 {
 }
 
 /* --- FILTER PANEL --- */
-.filter-panel {
+/* .filter-panel {
     display: none;
     position: fixed;
     top: var(--header-h);
@@ -106,7 +110,38 @@ header h1 {
     box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
-.filter-panel.visible { display: flex; }
+.filter-panel.visible { display: flex; } */
+
+.filter-panel {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Ukryty modal */
+    width: 100%;
+    height: 100dvh;
+    background-color: var(--bg-color);
+    z-index: 2000;
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-panel.active {
+    left: 0; /* Pokazujemy modal */
+}
+
+.filter-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.close-filter {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--accent-gold);
+}
 
 .sort-section {
     padding: 15px;
@@ -508,4 +543,43 @@ label.vege-toggle {
 .modal-ing-value {
     color: var(--accent-gold);
     font-weight: bold;
+}
+
+/* --- DESKTOP (od 1024px) --- */
+@media (min-width: 1024px) {
+    .app-layout {
+        display: flex; /* Aktywujemy boczny układ */
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .filter-panel {
+        position: static; /* Przestaje być modalem */
+        width: 360px;
+        min-width: 360px;
+        height: 100%;
+        border-right: 1px solid var(--accent-gold);
+        left: 0; /* Zawsze widoczny */
+    }
+
+    .main-wrapper {
+        flex: 1;
+        height: 100vh;
+        overflow-y: auto; /* Tylko lista się przewija */
+        padding: 0 20px;
+    }
+
+    /* Ukrywamy elementy mobilne */
+    .filter-header-mobile, 
+    .filter-toggle, 
+    .filter-footer {
+        display: none;
+    }
+
+    .recipe-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding-bottom: 40px;
+    }
 }
