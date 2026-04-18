@@ -13,13 +13,23 @@ let currentSort = 'name';
 
 const filterBtn = document.getElementById('filter-btn');
 const filterPanel = document.getElementById('filter-panel');
+const closeFilterBtn = document.getElementById('close-filter-btn');
 const recipeList = document.getElementById('recipe-list');
 const accordionContainer = document.getElementById('filter-accordion-container');
 
 // Otwieranie/Zamykanie przez guzik w headerze
 filterBtn.onclick = () => {
-    const isVisible = filterPanel.classList.toggle('visible');
-    document.body.classList.toggle('modal-open', isVisible);
+    const isVisible = filterPanel.classList.toggle('active');
+    if (window.innerWidth < 1024) {
+        document.body.classList.toggle('modal-open', isVisible);
+    }
+};
+
+closeFilterBtn.onclick = () => {
+    document.getElementById('filter-panel').classList.remove('active');
+    if (window.innerWidth < 1024) {
+        document.body.classList.toggle('modal-open', false);
+    }
 };
 
 // Funkcja tłumacząca
@@ -149,8 +159,10 @@ function setSort(type, btn) {
 
 document.getElementById('apply-filters').onclick = () => {
     applyAndRender();
-    filterPanel.classList.remove('visible');
-    document.body.classList.remove('modal-open');
+    if (window.innerWidth < 1024) {
+        filterPanel.classList.remove('active');
+        document.body.classList.remove('modal-open');
+    }
     window.scrollTo({
         top: 0,
         behavior: 'instant'
