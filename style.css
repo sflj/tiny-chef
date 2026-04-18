@@ -33,6 +33,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh;
     padding-top: var(--header-h);
     overflow-x: hidden;
     user-select: none;
@@ -42,6 +43,7 @@ body {
 body.modal-open {
     overflow: hidden;
     height: 100vh;
+    height: 100dvh;
 }
 
 .svg-icon {
