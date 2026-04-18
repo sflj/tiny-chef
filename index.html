@@ -45,6 +45,19 @@
 
     
     <div class="app-layout">
+        <div class="main-wrapper">
+            <header>
+                <h1 id="ui-title"></h1>
+                <span class="filter-toggle" id="filter-btn">
+                    <svg class="svg-icon icon-filter"><use href="#icon-filter"></use></svg>
+                </span>
+            </header>
+            
+            <main>
+                <div id="recipe-list"></div>
+            </main>
+        </div>
+        
         <aside class="filter-panel" id="filter-panel">
             <div class="filter-header-mobile">
                 <h2 id="ui-filter-title">Filtry</h2>
@@ -79,19 +92,6 @@
                 <button id="apply-filters"></button>
             </div>
         </aside>
-    
-        <div class="main-wrapper">
-            <header>
-                <h1 id="ui-title"></h1>
-                <span class="filter-toggle" id="filter-btn">
-                    <svg class="svg-icon icon-filter"><use href="#icon-filter"></use></svg>
-                </span>
-            </header>
-            
-            <main>
-                <div id="recipe-list"></div>
-            </main>
-        </div>
     </div>
 
     <div class="modal-backdrop" id="recipe-modal">
