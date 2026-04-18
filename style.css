@@ -71,7 +71,6 @@ body {
     height: 100vh;
     height: 100dvh;
     width: 100%;
-    padding: 0 20px;
 }
 
 /* --- HEADER --- */
@@ -79,7 +78,7 @@ header {
     background: #111;
     border-bottom: 1px solid #333;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding: 10px;
 }
