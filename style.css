@@ -34,17 +34,16 @@ body {
     align-items: center;
     min-height: 100vh;
     min-height: 100dvh;
-    padding-top: var(--header-h);
     overflow-x: hidden;
     user-select: none;
 }
 
 /* --- BODY LOCK --- */
-body.modal-open {
+/* body.modal-open {
     overflow: hidden;
     height: 100vh;
     height: 100dvh;
-}
+} */
 
 .svg-icon {
     width: 1.6em;
@@ -61,21 +60,28 @@ body.modal-open {
 }
 
 .app-layout {
-    display: block; /* Na mobile standardowy przepływ */
+    display: block;
+    width: 100%;
+}
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    padding: 0 20px;
 }
 
 /* --- HEADER --- */
 header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: var(--header-h);
     background: #111;
     border-bottom: 1px solid #333;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    padding: 10px;
 }
 
 header h1 {
@@ -86,12 +92,15 @@ header h1 {
 }
 
 .filter-toggle {
-    position: absolute;
-    right: 15px;
     cursor: pointer;
     user-select: none;
     padding: 5px;
     color: #bbb;
+}
+
+main {
+    flex: 1;
+    overflow-y: auto;
 }
 
 /* --- FILTER PANEL --- */
@@ -282,9 +291,7 @@ details[open] summary .svg-icon {
     flex-wrap: wrap; 
     gap: 6px; 
     font-size: 1.6rem; 
-    /* background: rgba(0,0,0,0.1);  */
     padding: 8px 16px; 
-    /* border-top: 1px solid rgba(255,255,255,0.05);  */
 }
 .plus { font-size: 0.8rem; color: var(--text-dim); }
 
@@ -548,38 +555,23 @@ label.vege-toggle {
 /* --- DESKTOP (od 1024px) --- */
 @media (min-width: 1024px) {
     .app-layout {
-        display: flex; /* Aktywujemy boczny układ */
+        display: flex;
         height: 100vh;
+        height: 100dvh;
         overflow: hidden;
     }
 
     .filter-panel {
-        position: static; /* Przestaje być modalem */
+        position: static;
         width: 360px;
         min-width: 360px;
         height: 100%;
-        border-right: 1px solid var(--accent-gold);
-        left: 0; /* Zawsze widoczny */
+        border-right: 1px solid #444;
+        left: 0;
     }
 
-    .main-wrapper {
-        flex: 1;
-        height: 100vh;
-        overflow-y: auto; /* Tylko lista się przewija */
-        padding: 0 20px;
-    }
-
-    /* Ukrywamy elementy mobilne */
     .filter-header-mobile, 
-    .filter-toggle, 
-    .filter-footer {
+    .filter-toggle {
         display: none;
-    }
-
-    .recipe-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        padding-bottom: 40px;
     }
 }
