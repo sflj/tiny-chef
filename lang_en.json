@@ -3,6 +3,7 @@
     "title": "tinyCHEF",
     "sort_label": "Sort by:",
     "filter_btn": "Apply",
+    "filter_title": "Filters",
     "vege_only": "Veggie only",
     "tool_header": "Tools (Pick one)",
     "no_results": "We've searched the wild, but found nothing with:",
