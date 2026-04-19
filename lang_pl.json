@@ -8,7 +8,8 @@
     "tool_header": "Sprzęt (Wybierz jeden)",
     "no_results": "Przeszukaliśmy knieje, ale nie znaleźliśmy nic z:",
     "reset_filters": "Zmień strategię",
-    "prep_time": "min"
+    "prep_time": "min",
+    "hint_flip": "Kliknij lub przesuń, aby obrócić"
   },
   "units": {
     "g": "g",
