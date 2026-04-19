@@ -321,11 +321,6 @@ details[open] summary .svg-icon {
     will-change: transform;
 }
 
-/* Klasa wyzwalająca obrót (dodamy ją w JS) */
-/* .card-inner.is-flipped {
-    transform: rotateY(180deg);
-} */
-
 /* Wspólne style dla obu stron */
 .card-face {
     position: absolute;
@@ -352,6 +347,33 @@ details[open] summary .svg-icon {
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
+}
+
+.flip-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px; /* Odstęp od karty */
+    color: var(--accent-gold);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hint-icon {
+    animation: handSwipe 2s infinite ease-in-out;
+}
+
+@keyframes handSwipe {
+    0%, 100% { transform: rotate(-10deg) translateX(-5px); }
+    50% { transform: rotate(10deg) translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 #apply-filters {
