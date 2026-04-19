@@ -366,7 +366,7 @@ function showRecipeDetails(recipe) {
             hasUserFlippedCard = true;
             localStorage.setItem('hasUserFlipped', 'true');
             const hintElement = document.getElementById('flip-hint');
-            if (hintElement) hintElement.remove(); // Usuwamy z DOM zamiast ukrywać
+            if (hintElement) hintElement.classList.add('hidden');
         }
     };
     cardInner.addEventListener('click', handleFirstFlip);
