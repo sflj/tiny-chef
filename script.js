@@ -57,6 +57,7 @@ function updateStaticUI() {
     document.getElementById('ui-title').textContent = t('title', 'ui');
     document.getElementById('ui-vege-label').textContent = t('vege_only', 'ui');
     document.getElementById('apply-filters').textContent = t('filter_btn', 'ui');
+    document.getElementById('ui-filter-title').textContent = t('filter_title', 'ui');
 }
 
 async function fetchRecipes() {
